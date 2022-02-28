@@ -91,7 +91,7 @@ const mouseover1 = function(event, d) {
 }
 
 // creates a mouse move event handler
-// not sure what the tooltip1.style does
+// allows tooltip to move with the mouse
 const mousemove1 = function(event, d) {
   tooltip1.style("left", (event.x)+"px") 
           .style("top", (event.y + yTooltipOffset) +"px"); 
@@ -179,9 +179,24 @@ const svg2 = d3
         .attr("width", xscale2.bandwidth());
   })
 
+// tooltip work
+const tooltip2 = d3.select("#csv-bar")
+                  .append("div")
+                  .append('id', "tooltip2")
+                  .style("opacity", 0)
+                  .attr("class", "tooltip");
 
+const mouseover2 = function(event, d) {
+  tooltip2.html("Name: " + d.name + "<br> Score: " + d.score + "<br>")
+          .style("opacity", 1);
+}
 
+const mousemove2 = function(event, d) {
+  tooltip2.style("left", (event.x)+"px") 
+          .style("top", (event.y + yTooltipOffset) +"px"); 
+}
 
-
-
+const mouseleave2 = function(event, d) { 
+    tooltip2.style("opacity", 0); 
+}
 
