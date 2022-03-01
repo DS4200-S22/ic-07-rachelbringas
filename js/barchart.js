@@ -76,29 +76,26 @@ svg1.append("g")
 
 */
 
-// selects the hard coded bar div, appends a new div with the id of "tooltip1" and the class "tooltip",
-// sets the opacity to 0 so that it is see-through
-const tooltip1 = d3.select("#hard-coded-bar") 
+// Add div for tooltip to webpage
+const tooltip1 = d3.select("body") 
                 .append("div") 
                 .attr('id', "tooltip1") 
                 .style("opacity", 0) 
                 .attr("class", "tooltip"); 
 
-// creates a mouseover event handler, gets the information from the bar graph to display
+// Add values to tooltip on mouseover, make tooltip div opaque  
 const mouseover1 = function(event, d) {
   tooltip1.html("Name: " + d.name + "<br> Score: " + d.score + "<br>") 
           .style("opacity", 1);  
 }
 
-// creates a mouse move event handler
-// allows tooltip to move with the mouse
+// Position tooltip to follow mouse 
 const mousemove1 = function(event, d) {
-  tooltip1.style("left", (event.x)+"px") 
-          .style("top", (event.y + yTooltipOffset) +"px"); 
+  tooltip1.style("left", (event.pageX)+"px") 
+          .style("top", (event.pageY + yTooltipOffset)+"px"); 
 }
 
-// creates a mouse leave event handler for when the user mouses off the chart, 
-// resets the opacity to 0
+// Return tooltip to transparant when mouse leaves
 const mouseleave1 = function(event, d) { 
   tooltip1.style("opacity", 0); 
 }
@@ -127,48 +124,73 @@ svg1.selectAll(".bar")
      .on("mouseleave", mouseleave1);
 
 
+// Add div for tooltip to webpage
+const tooltip2 = d3.select("body") 
+                .append("div") 
+                .attr('id', "tooltip2") 
+                .style("opacity", 0) 
+                .attr("class", "tooltip"); 
+
+// Add values to tooltip on mouseover, make tooltip div opaque  
+const mouseover2 = function(event, d) {
+  tooltip2.html("Name: " + d.name + "<br> Score: " + d.score + "<br>") 
+          .style("opacity", 1);  
+}
+
+// Position tooltip to follow mouse 
+const mousemove2 = function(event, d) {
+  tooltip2.style("left", (event.pageX)+"px") 
+          .style("top", (event.pageY + yTooltipOffset)+"px"); 
+}
+
+// Return tooltip to transparant when mouse leaves
+const mouseleave2 = function(event, d) { 
+  tooltip2.style("opacity", 0); 
+}
+
 
 
 // ALL CODE FOR the SECOND BARCHART IN THE CSV-BAR DIV
 
-// add svg to csv-bar div
-const svg2 = d3
-  .select("#csv-bar")
-  .append("svg")
-  .attr("width", width-margin.left - margin.right)
-  .attr("height", height - margin.top - margin.bottom)
-  .attr("viewbox", [0, 0, width, height]);
-
   // data for plot
-  d3.csv("data/barchart.csv").then((data) => {
+  d3.csv("data/barchart.csv").then(function(data) {
 
-    console.log(data)
+    // add svg to csv-bar div
+    let svg2 = d3
+      .select("#csv-bar")
+      .append("svg")
+      .attr("width", width-margin.left-margin.right)
+      .attr("height", height - margin.top - margin.bottom)
+      .attr("viewBox", [0, 0, width, height]);
+
+    console.log(data);
 
     // setting the axes
     let maxY2 = d3.max(data, function(d) { return d.score; });
 
     let yscale2 = d3.scaleLinear()
-                    .domain([0, maxY2])
-                    .range([height-margin.bottom,margin.top]);
+                  .domain([0,maxY2])
+                  .range([height-margin.bottom, margin.top]); 
+
 
     let xscale2 = d3.scaleBand()
-                      .domain(d3.range(data.length))
-                      .range([margin.left, width - margin.right])
-                      .padding(0.1); 
+                    .domain(d3.range(data.length))
+                    .range([margin.left, width - margin.right])
+                    .padding(0.1);
 
     svg2.append("g")
           .attr("transform", `translate(${margin.left}, 0)`) 
           .call(d3.axisLeft(yscale2)) 
           .attr("font-size", '20px');
-    
+
     svg2.append("g")
           .attr("transform", `translate(0,${height - margin.bottom})`) 
           .call(d3.axisBottom(xscale2) 
                     .tickFormat(i => data[i].name))  
           .attr("font-size", '20px'); 
 
-    // adding the bars
-    svg2.selectAll(".bar")
+  // adding the bars
+  svg2.selectAll(".bar")
       .data(data)
       .enter()
       .append("rect")
@@ -176,27 +198,11 @@ const svg2 = d3
         .attr("x", (d,i) => xscale2(i)) 
         .attr("y", (d) => yscale2(d.score)) 
         .attr("height", (d) => (height - margin.bottom) - yscale2(d.score)) 
-        .attr("width", xscale2.bandwidth());
-  })
+        .attr("width", xscale2.bandwidth())
+        .on("mouseover", mouseover2) 
+        .on("mousemove", mousemove2)
+        .on("mouseleave", mouseleave2);
+})
 
-// tooltip work
-const tooltip2 = d3.select("#csv-bar")
-                  .append("div")
-                  .append('id', "tooltip2")
-                  .style("opacity", 0)
-                  .attr("class", "tooltip");
 
-const mouseover2 = function(event, d) {
-  tooltip2.html("Name: " + d.name + "<br> Score: " + d.score + "<br>")
-          .style("opacity", 1);
-}
-
-const mousemove2 = function(event, d) {
-  tooltip2.style("left", (event.x)+"px") 
-          .style("top", (event.y + yTooltipOffset) +"px"); 
-}
-
-const mouseleave2 = function(event, d) { 
-    tooltip2.style("opacity", 0); 
-}
 
